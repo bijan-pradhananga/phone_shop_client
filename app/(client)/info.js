@@ -1,1 +1,1 @@
-export const companyName = 'Hamro PhoneShop'
+export const companyName = 'TechSavvys'
