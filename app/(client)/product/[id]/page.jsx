@@ -15,7 +15,6 @@ const Page = () => {
   const dispatch = useAppDispatch();
   const { singleData, error, singleLoading } = useAppSelector((state) => state.product);
   const { ratings } = useAppSelector((state) => state.rating)
-  console.log(ratings)
   const params = useParams();
   const id = params.id;
 
