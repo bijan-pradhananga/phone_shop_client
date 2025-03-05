@@ -1,9 +1,15 @@
-"use client"
+"use client";
 import { useState } from "react";
-import API from '@/config/config';
 
 const ProductImages = ({ name, images }) => {
-    const [selectedImage, setSelectedImage] = useState(images[0]); // Initialize with the first image
+    // Fallback image URL (located in the public folder)
+    const noImageUrl = '/noImage.png';
+
+    // Ensure images is an array and has at least one image, otherwise use the fallback
+    const validImages = images && images.length > 0 ? images : [noImageUrl];
+
+    // Initialize selectedImage with the first image from validImages
+    const [selectedImage, setSelectedImage] = useState(validImages[0]);
 
     return (
         <div className="shrink-0 w-full max-w-md lg:max-w-lg mx-auto">
@@ -16,10 +22,9 @@ const ProductImages = ({ name, images }) => {
                 />
             </div>
 
-
             {/* Thumbnail Images */}
             <div className="mt-4 flex gap-2 justify-center">
-                {images.map((image, index) => (
+                {validImages.map((image, index) => (
                     <img
                         key={index}
                         className={`w-16 h-16 object-cover border rounded-md cursor-pointer ${selectedImage === image ? "border-indigo-500 ring-2 ring-indigo-500" : "border-gray-200"
