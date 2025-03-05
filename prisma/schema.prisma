@@ -22,4 +22,6 @@ model User {
   role      String   @default("user")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("users")  // 👈 This ensures MongoDB uses 'users' instead of 'User'
 }
