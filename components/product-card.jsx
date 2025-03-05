@@ -13,14 +13,20 @@ const ProductCard = ({ product }) => {
 }
 
 const ProductCardHeader = ({ product }) => {
+    // Fallback image URL (located in the public folder)
+    const noImageUrl = '/noImage.png';
+
+    // Determine the image source
+    const imageSrc = product.images && product.images.length > 0 ? product.images[0] : noImageUrl;
+
     return (
         <img
-            src={product.images[0]}
+            src={imageSrc}
             alt={product.name}
             className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
         />
-    )
-}
+    );
+};
 
 const ProductCardBody = ({ product }) => {
     return (
