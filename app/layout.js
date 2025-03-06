@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./Storeprovider";
+import { companyName } from "./(client)/info";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "TheChairShop",
-  description: "Ecommerce site to sell electronics",
+  title: "TechSavvys",
+  description: "Ecommerce site to sell smartphones",
 };
 
 export default function RootLayout({ children }) {
