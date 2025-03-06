@@ -10,6 +10,7 @@ import { useEffect } from 'react';
 import SingleProductLoader from '@/components/loader/single-product-loader';
 import { fetchRatings } from '@/lib/features/rating';
 import ProductRatingForm from '@/components/product-rating-form';
+import SimilarProductSection from '@/components/similar-products';
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -45,6 +46,9 @@ const Page = () => {
       )}
     </main>
     <ProductReviews ratings={ratings} />
+    {!singleLoading && singleData?.name && (
+        <SimilarProductSection phone_model={singleData.name} />
+      )}
     </>
   );
 };
