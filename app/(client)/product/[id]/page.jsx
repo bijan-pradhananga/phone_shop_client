@@ -9,8 +9,9 @@ import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
 import SingleProductLoader from '@/components/loader/single-product-loader';
 import { fetchRatings } from '@/lib/features/rating';
-import ProductRatingForm from '@/components/product-rating-form';
 import SimilarProductSection from '@/components/similar-products';
+import Link from 'next/link';
+import ServerErrorPage from '@/components/design/serverError';
 
 const Page = () => {
   const dispatch = useAppDispatch();
@@ -29,25 +30,28 @@ const Page = () => {
   }, [dispatch, id]);
 
   if (error) {
-    return <NotFoundPage />;
+    return <ServerErrorPage />;
   }
 
   return (
     <>
-    <main className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 md:mt-10 mb-20">
-      {singleLoading ? (
-        <SingleProductLoader />
-      ) : (
-        <>
-          <ProductImages name={singleData.name} images={singleData.images} />
-          <ProductDescription product={singleData} ratings={ratings} />
+      <main className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 md:mt-10 mb-20">
+        {singleLoading ? (
+          <SingleProductLoader />
+        ) : (
+          <>
+            <ProductImages name={singleData.name} images={singleData.images} />
+            <ProductDescription product={singleData} ratings={ratings} />
 
+          </>
+        )}
+      </main>
+
+      {!singleLoading && singleData?.name && (
+        <>
+          <ProductReviews ratings={ratings} productId={id} />
+          <SimilarProductSection phone_model={singleData.name} />
         </>
-      )}
-    </main>
-    <ProductReviews ratings={ratings} />
-    {!singleLoading && singleData?.name && (
-        <SimilarProductSection phone_model={singleData.name} />
       )}
     </>
   );
@@ -102,14 +106,18 @@ const ProductDescription = ({ product, ratings }) => {
 
 
       {/* Specifications Section */}
-      <ProductSpecs specifications={specifications}/>
+      <ProductSpecs specifications={specifications} />
 
       {/* Separator */}
       <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
       {/* Reviews Section */}
-     
-      <ProductRatingForm productId={product._id} />
+      <Link href={`/product/${product._id}/review`}>
+        <span className="mt-4 text-blue-600 hover:text-blue-800 font-semibold text-sm">
+          Rate This Product
+        </span>
+      </Link>
+
     </div>
   );
 };
@@ -211,7 +219,7 @@ const ProductRating = ({ product }) => {
   )
 }
 
-const ProductReviews = ({ ratings }) => {
+const ProductReviews = ({ ratings, productId }) => {
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
@@ -231,9 +239,11 @@ const ProductReviews = ({ ratings }) => {
               </div>
             ))}
           </div>
-          <button className="mt-6 text-indigo-600 hover:text-indigo-800 font-semibold text-sm">
-            Read all {ratings.length} reviews
-          </button>
+          <Link href={`/product/${productId}/review`}>
+            <span className="mt-4 text-blue-600 hover:text-blue-800 font-semibold text-sm">
+              Read all {ratings.length} reviews
+            </span>
+          </Link>
         </>
       ) : (
         <p className="text-gray-500">No reviews found</p>
