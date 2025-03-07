@@ -4,8 +4,7 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { addOrUpdateRating, clearError, clearSuccess } from "@/lib/features/rating";
-import { fetchSingleProduct } from "@/lib/features/product";
+import { addOrUpdateRating, checkUserRating, clearError, clearSuccess, fetchRatings } from "@/lib/features/rating";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 
@@ -31,22 +30,26 @@ const ProductRatingForm = ({ productId }) => {
                 review,
             })
         );
-        console.log({userId: session.user.id,
+        console.log({
+            userId: session.user.id,
             productId,
             rating,
-            review,})
+            review,
+        })
         if (addOrUpdateRating.fulfilled.match(result)) {
-            dispatch(fetchSingleProduct(productId));
+            dispatch(fetchRatings(productId));
+            dispatch(checkUserRating({
+                userId: session.user.id,
+                productId
+            }))
         }
     };
 
     return (
         <div className="mt-8">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Rate This Product
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                Leave Your Review
             </h2>
-            {success && <p className="text-green-500">{success}</p>}
-            {error && <p className="text-red-500">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div className="flex items-center gap-2 mb-4">
                     {[...Array(5)].map((_, index) => (
@@ -69,6 +72,7 @@ const ProductRatingForm = ({ productId }) => {
                 />
                 <Button type="submit">Submit Review</Button>
             </form>
+            <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
             <AlertSuccess
                 isOpen={success}
                 message={success}
