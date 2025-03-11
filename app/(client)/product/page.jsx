@@ -16,7 +16,7 @@ const ProductPage = () => {
     const { data, isLoading, total, totalPages, isSearched, error } = useAppSelector((state) => state.product);
     const searchParams = useSearchParams();
 
-    let limit = 8;
+    let limit = 12;
     let currentPage = 1;
     let sort = 'def';
     if (searchParams.get('page')) {
