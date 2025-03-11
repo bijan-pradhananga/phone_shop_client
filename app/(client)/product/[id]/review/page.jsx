@@ -7,6 +7,7 @@ import { checkUserRating, fetchRatings } from '@/lib/features/rating';
 import ProductRatingForm from '@/components/product-rating-form';
 import ServerErrorPage from '@/components/design/serverError';
 import { useSession } from 'next-auth/react';
+import YourReview from '@/components/your-review';
 
 const Page = () => {
     const { data: session } = useSession();
@@ -36,7 +37,7 @@ const Page = () => {
     return (
         <>
             {hasRated && userRating ? (
-                <YourReview userRating={userRating} />
+                <YourReview userRating={userRating} userId={session.user.id} productId={id}/>
             ) : (
                 <ProductRatingForm productId={id} />
             )}
@@ -47,26 +48,28 @@ const Page = () => {
 };
 
 
-const YourReview = ({ userRating }) => {
-    return (
+// const YourReview = ({ userRating }) => {
+//     return (
 
-        <div className="mt-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
-                Your Review
-            </h2>
-            <div className="space-y-6">
-                <div className="border-b pb-4">
-                    <div className="flex items-center space-x-2">
-                        <p className="text-yellow-500 text-xl">{'★'.repeat(userRating.rating)}</p>
-                        <p className="text-sm text-gray-500">({userRating.rating}/5)</p>
-                    </div>
-                    <p className="text-gray-700 mt-2">{userRating.review}</p>
-
-                </div>
-            </div>
-        </div>
-    );
-};
+//         <div className="mt-8">
+//             <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
+//                 Your Review
+//             </h2>
+//             <div className="space-y-6">
+//                 <div className="border-b pb-4">
+//                     <div className="flex justify-between">
+//                         <div className='flex items-center space-x-2'>
+//                             <p className="text-yellow-500 text-xl">{'★'.repeat(userRating.rating)}</p>
+//                             <p className="text-sm text-gray-500">({userRating.rating}/5)</p>
+//                         </div>
+//                         <div className='text-2xl font-bold cursor-pointer'>...</div>
+//                     </div>
+//                     <p className="text-gray-700 mt-2">{userRating.review}</p>
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// };
 
 const ProductReviews = ({ ratings }) => {
     return (
