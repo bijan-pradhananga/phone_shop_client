@@ -1,4 +1,3 @@
-import API from "@/config/config";
 import Link from "next/link";
 
 const CartComponent = ({item, HandleRemoveFromCart}) => {
