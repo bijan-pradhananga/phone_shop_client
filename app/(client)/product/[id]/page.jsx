@@ -3,7 +3,7 @@ import NotFoundPage from '@/components/design/404notFound';
 import ProductActionBtns from '@/components/product-action-btns';
 import { Button } from '@/components/ui/button';
 import ProductImages from '@/components/image-container';
-import { fetchSingleProduct } from '@/lib/features/product';
+import { addViewedProducts, fetchSingleProduct } from '@/lib/features/product';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { useParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -12,8 +12,10 @@ import { fetchRatings } from '@/lib/features/rating';
 import SimilarProductSection from '@/components/similar-products';
 import Link from 'next/link';
 import ServerErrorPage from '@/components/design/serverError';
+import { useSession } from 'next-auth/react';
 
 const Page = () => {
+  const { data: session } = useSession();
   const dispatch = useAppDispatch();
   const { singleData, error, singleLoading } = useAppSelector((state) => state.product);
   const { ratings } = useAppSelector((state) => state.rating)
@@ -27,6 +29,9 @@ const Page = () => {
   useEffect(() => {
     dispatch(fetchSingleProduct(id));
     dispatch(fetchRatings(id));
+    if (session.user) {
+      dispatch(addViewedProducts({productId:id,userId:session.user.id}))
+    }
   }, [dispatch, id]);
 
   if (error) {
