@@ -25,7 +25,7 @@ import { clearError, clearSuccess, fetchSingleProduct, updateProduct } from "@/l
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 import { editProductFormSchema } from "@/schemas/product";
-import { fetchCategory } from "@/lib/features/category";
+// import { fetchCategory } from "@/lib/features/category";
 import { fetchBrand } from "@/lib/features/brand";
 import { useSearchParams } from "next/navigation";
 import NotFoundPage from "@/components/design/404notFound";
@@ -162,7 +162,7 @@ const PageContent = () => {
                             </FormItem>
                         )}
                     />
-                    {!isLoading &&
+                    {/* {!isLoading &&
                         <FormField
                             control={form.control}
                             name="category"
@@ -190,7 +190,7 @@ const PageContent = () => {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />}
+                        />} */}
                     {!isLoading && <FormField
                         control={form.control}
                         name="brand"

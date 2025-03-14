@@ -25,7 +25,7 @@ import { addProduct, clearError, clearSuccess } from "@/lib/features/product";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 import { productFormSchema } from "@/schemas/product";
-import { fetchCategory } from "@/lib/features/category";
+// import { fetchCategory } from "@/lib/features/category";
 import { fetchBrand } from "@/lib/features/brand";
 
 const AddProductPage = () => {
@@ -130,7 +130,7 @@ const AddProductPage = () => {
                             </FormItem>
                         )}
                     />
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="category"
                         render={({ field }) => (
@@ -157,7 +157,7 @@ const AddProductPage = () => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
                     <FormField
                         control={form.control}
                         name="brand"
