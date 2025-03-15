@@ -61,9 +61,9 @@ const OrderDetails = () => {
                                                                     alt="product image"
                                                                 />
                                                             </div>
-                                                            <a href="#" className="hover:underline">
+                                                            <Link href={`/product/${item.product._id}`} className="hover:underline">
                                                                 {item.product?.name || "Product Name"}
-                                                            </a>
+                                                            </Link>
                                                         </div>
                                                     </td>
                                                     <td className="p-4 text-base font-normal text-gray-900 dark:text-white">
