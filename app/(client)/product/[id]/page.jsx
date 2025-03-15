@@ -29,7 +29,7 @@ const Page = () => {
   useEffect(() => {
     dispatch(fetchSingleProduct(id));
     dispatch(fetchRatings(id));
-    if (session.user) {
+    if (session) {
       dispatch(addViewedProducts({productId:id,userId:session.user.id}))
     }
   }, [dispatch, id]);
