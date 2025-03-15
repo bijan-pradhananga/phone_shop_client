@@ -30,12 +30,7 @@ const ProductRatingForm = ({ productId }) => {
                 review,
             })
         );
-        console.log({
-            userId: session.user.id,
-            productId,
-            rating,
-            review,
-        })
+
         if (addOrUpdateRating.fulfilled.match(result)) {
             dispatch(fetchRatings(productId));
             dispatch(checkUserRating({
@@ -73,7 +68,7 @@ const ProductRatingForm = ({ productId }) => {
                 <Button type="submit">Submit Review</Button>
             </form>
             <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
-            <AlertSuccess
+            {/* <AlertSuccess
                 isOpen={success}
                 message={success}
                 onClose={() => dispatch(clearSuccess())}
@@ -82,7 +77,7 @@ const ProductRatingForm = ({ productId }) => {
                 isOpen={error}
                 message={error}
                 onClose={() => dispatch(clearError())}
-            />
+            /> */}
         </div>
     );
 };
