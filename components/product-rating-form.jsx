@@ -11,7 +11,7 @@ import AlertFailure from "@/components/alert-failure";
 const ProductRatingForm = ({ productId }) => {
     const { data: session } = useSession();
     const dispatch = useAppDispatch();
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(1);
     const [review, setReview] = useState("");
     const { error, success } = useAppSelector((state) => state.rating);
 

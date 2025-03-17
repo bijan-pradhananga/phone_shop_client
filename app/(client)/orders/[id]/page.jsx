@@ -58,7 +58,7 @@ const OrderDetails = () => {
                                                                 <img
                                                                     className="h-auto w-full max-h-full"
                                                                     src={item.product.images[0]}
-                                                                    alt="product image"
+                                                                    alt="product"
                                                                 />
                                                             </div>
                                                             <Link href={`/product/${item.product._id}`} className="hover:underline">
