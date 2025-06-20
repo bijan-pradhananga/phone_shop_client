@@ -58,8 +58,7 @@ const Page = () => {
                                 <TableRow>
                                     <TableHead className="w-[100px]">#</TableHead>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>Description</TableHead>
-                                    <TableHead>Created At</TableHead>
+                                  
                                     <TableHead >Action</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -70,10 +69,6 @@ const Page = () => {
                                         <TableCell className="font-medium">{index + 1}</TableCell>
                                         {/* Name */}
                                         <TableCell>{item.name}</TableCell>
-                                        {/* Description */}
-                                        <TableCell className="max-w-xs">{item.description}</TableCell>
-                                        {/* Date */}
-                                        <TableCell>{item.createdAt}</TableCell>
                                         {/* Actions */}
                                         <TableCell>
                                             <div className="flex items-center gap-2">

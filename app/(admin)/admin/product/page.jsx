@@ -27,18 +27,19 @@ const ProductPage = () => {
     const { data, isLoading, success, error, singleData, total, totalPages, isSearched } = useAppSelector((state) => state.product);
     const searchParams = useSearchParams();
     let currentPage = 1;
-    if (searchParams.get('page') ) {
+    let limit = 20;
+    if (searchParams.get('page')) {
         currentPage = Number(searchParams.get('page'))
     }
-    
+
     const [isModalOpen, setModalOpen] = useState(false);
-    
+
     const handleDelete = async (id) => {
         let confirm = window.confirm("Are you sure you want to delete this product?");
         if (confirm) {
             const result = await dispatch(deleteProduct(id));
             if (deleteProduct.fulfilled.match(result)) {
-                dispatch(fetchProducts({ page: currentPage, limit: 10 }));
+                dispatch(fetchProducts({ page: currentPage, limit }));
             }
         }
     };
@@ -60,9 +61,9 @@ const ProductPage = () => {
         }
     }
 
-    const fetchItems = () =>{
+    const fetchItems = () => {
         dispatch(clearSearch());
-        dispatch(fetchProducts({ page: currentPage, limit: 10 }));
+        dispatch(fetchProducts({ page: currentPage, limit }));
     }
 
     const searchItems = (query) => {
@@ -76,8 +77,8 @@ const ProductPage = () => {
     };
 
     useEffect(() => {
-        dispatch(fetchProducts({ page: currentPage, limit: 10 }));
-    }, [dispatch,currentPage]);
+        dispatch(fetchProducts({ page: currentPage, limit }));
+    }, [dispatch, currentPage]);
 
     return (
         <div>
@@ -94,9 +95,7 @@ const ProductPage = () => {
                                 <TableRow>
                                     <TableHead className="w-[100px]">#</TableHead>
                                     <TableHead>Name</TableHead>
-                                    <TableHead>Description</TableHead>
                                     <TableHead>Price</TableHead>
-                                    <TableHead>Category</TableHead>
                                     <TableHead>Brand</TableHead>
                                     <TableHead>Action</TableHead>
                                 </TableRow>
@@ -104,11 +103,11 @@ const ProductPage = () => {
                             <TableBody>
                                 {data.map((item, index) => (
                                     <TableRow key={item._id}>
-                                        <TableCell className="font-medium">{index + 1}</TableCell>
+                                        <TableCell className="font-medium">
+                                            {isSearched ? index + 1 : (currentPage - 1) * limit + index + 1}
+                                        </TableCell>
                                         <TableCell>{item.name}</TableCell>
-                                        <TableCell className="max-w-xs">{item.description}</TableCell>
                                         <TableCell>{item.price}</TableCell>
-                                        <TableCell>{item.category.name}</TableCell>
                                         <TableCell>{item.brand.name}</TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">

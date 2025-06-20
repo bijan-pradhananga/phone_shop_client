@@ -1,245 +1,242 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-    Form,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormControl,
-    FormMessage,
-} from "@/components/ui/form";
-import {
-    Select,
-    SelectTrigger,
-    SelectContent,
-    SelectItem,
-    SelectValue
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import React, { Suspense, useEffect, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { clearError, clearSuccess, fetchSingleProduct, updateProduct } from "@/lib/features/product";
-import AlertSuccess from "@/components/alert-success";
-import AlertFailure from "@/components/alert-failure";
 import { editProductFormSchema } from "@/schemas/product";
-// import { fetchCategory } from "@/lib/features/category";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue
+} from "@/components/ui/select";
+import React, { useEffect, useTransition } from "react";
+import { useAppDispatch, useAppSelector } from "@/lib/hooks";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  fetchSingleProduct,
+  updateProduct,
+  clearError,
+  clearSuccess
+} from "@/lib/features/product";
 import { fetchBrand } from "@/lib/features/brand";
-import { useSearchParams } from "next/navigation";
+import AlertFailure from "@/components/alert-failure";
 import NotFoundPage from "@/components/design/404notFound";
 
-const PageContent = () => {
-    const dispatch = useAppDispatch();
-    const { singleData, success, error, singleLoading } = useAppSelector((state) => state.product);
-    const { data: categories, isLoading } = useAppSelector((state) => state.category);
-    const { data: brands } = useAppSelector((state) => state.brand);
-    const [isPending, startTransition] = useTransition();
-    const params = useSearchParams();
-    const id = params.get('id'); // Move this outside the Suspense boundary
+const EditProductPage = () => {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const { singleData, singleLoading, error, success } = useAppSelector(state => state.product);
+  const { data: brands, isLoading: brandLoading } = useAppSelector(state => state.brand);
+  const [isPending, startTransition] = useTransition();
+  const params = useSearchParams();
+  const id = params.get("id");
 
-    if (!id) {
-        return <NotFoundPage />; // Return early if ID is missing
+  const form = useForm({
+    resolver: zodResolver(editProductFormSchema),
+    defaultValues: {
+      name: "",
+      price: 0,
+      brand: "",
+      stock: 0,
+      specifications: {
+        ram_capacity: 0,
+        internal_memory: 0,
+        screen_size: 0,
+        battery_capacity: 0,
+        processor: "",
+        primary_camera_rear: 0,
+        primary_camera_front: 0
+      }
     }
+  });
 
-    const form = useForm({
-        resolver: zodResolver(editProductFormSchema),
-        defaultValues: {
-            name: '',
-            description: '',
-            price: 0,
-            stock: 1,
-            category: '',
-            brand: '',
-        },
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchSingleProduct(id));
+      dispatch(fetchBrand());
+    }
+  }, [id]);
+
+  useEffect(() => {
+    if (singleData?._id) {
+      form.reset({
+        name: singleData.name,
+        price: singleData.price,
+        brand: singleData.brand._id,
+        stock: singleData.stock,
+        specifications: {
+          ram_capacity: singleData.specifications.ram_capacity,
+          internal_memory: singleData.specifications.internal_memory,
+          screen_size: singleData.specifications.screen_size,
+          battery_capacity: singleData.specifications.battery_capacity,
+          processor: singleData.specifications.processor,
+          primary_camera_rear: singleData.specifications.primary_camera_rear,
+          primary_camera_front: singleData.specifications.primary_camera_front
+        }
+      });
+    }
+  }, [singleData]);
+
+  if (!id) return <NotFoundPage />;
+  if (singleLoading || brandLoading) return <div>Loading...</div>;
+  if (error) return <NotFoundPage />;
+
+  const handleUpdate = async (data) =>{
+    const result = await dispatch(updateProduct({ id: singleData._id, formData: data }));
+     if (updateProduct.fulfilled.match(result)) {
+        router.push('/admin/product');
+     }
+  }
+
+  const onSubmit = (data) => {
+    if (!singleData?._id) return;
+    startTransition(() => {
+        handleUpdate(data);
     });
+  };
 
-    useEffect(() => {
-        const fetchDetails = async () => {
-            await dispatch(fetchCategory());
-            await dispatch(fetchBrand());
-            if (id) {
-                await dispatch(fetchSingleProduct(id));
-            }
-        };
-        fetchDetails();
-    }, [id]);
+  return (
+    <div>
+      <Header />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {/* Name */}
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={isPending} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-    useEffect(() => {
-        if (Object.keys(singleData).length > 0) {
-            if (singleData.category._id) {
-                form.setValue('category', singleData.category._id);
-            }
-            if (singleData.category._id) {
-                form.setValue('brand', singleData.brand._id);
-            }
-            form.setValue('name', singleData.name);
-            form.setValue('description', singleData.description);
-            form.setValue('price', singleData.price);
-            form.setValue('stock', singleData.stock);
-        }
-    }, [singleData,categories,brands]);
+          {/* Price */}
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Price</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} disabled={isPending} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-    if (singleLoading && isLoading) {
-        return <div>Loading...</div>;
-    }
+          {/* Stock */}
+          <FormField
+            control={form.control}
+            name="stock"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Stock</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} disabled={isPending} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-    if (error) {
-        return <NotFoundPage />; // Return error if data fetching fails
-    }
+          {/* Brand */}
+          <FormField
+            control={form.control}
+            name="brand"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Brand</FormLabel>
+                <FormControl>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isPending}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a brand" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {brands?.map((b) => (
+                        <SelectItem key={b._id} value={b._id}>
+                          {b.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-    const onSubmit = async (data) => {
-        if (singleData?._id) {
-            const formData = {
-                name: data.name,
-                description: data.description,
-                price: data.price,
-                stock: data.stock,
-                category: data.category,
-                brand: data.brand
-            };
-            startTransition(() => {
-                dispatch(updateProduct({ id: singleData._id, formData }));
-            });
-        }
-    };
+          {/* Specifications */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {([
+              { name: "ram_capacity", label: "RAM (GB)" },
+              { name: "internal_memory", label: "Internal Memory (GB)" },
+              { name: "screen_size", label: "Screen Size (inches)" },
+              { name: "battery_capacity", label: "Battery (mAh)" },
+              { name: "processor", label: "Processor", type: "text" },
+              { name: "primary_camera_rear", label: "Rear Camera (MP)" },
+              { name: "primary_camera_front", label: "Front Camera (MP)" }
+            ]).map(({ name, label, type = "number" }) => (
+              <FormField
+                key={name}
+                control={form.control}
+                name={`specifications.${name}`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                      <Input {...field} type={type} disabled={isPending} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ))}
+          </div>
 
-    return (
-        <div>
-            <Header />
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="Product Name" disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Description</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} placeholder="Product Description" disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="price"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Price</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="100.00" type="number" disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="stock"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Stock</FormLabel>
-                                <FormControl>
-                                    <Input {...field} placeholder="10" type="number" disabled={isPending} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    {/* {!isLoading &&
-                        <FormField
-                            control={form.control}
-                            name="category"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Category</FormLabel>
-                                    <FormControl>
-                                        <Select
-                                            onValueChange={field.onChange} // Update the form value
-                                            value={field.value} // Controlled input
-                                            disabled={isPending} // Disable if needed
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Select a category" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {categories.map((item) => (
-                                                    <SelectItem key={item._id} value={item._id}>
-                                                        {item.name}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />} */}
-                    {!isLoading && <FormField
-                        control={form.control}
-                        name="brand"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Brand</FormLabel>
-                                <FormControl>
-                                    <Select
-                                        onValueChange={field.onChange} // Update the form value
-                                        value={field.value} // Controlled input
-                                        disabled={isPending} // Disable if needed
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a brand" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {brands.map((item) => (
-                                                <SelectItem key={item._id} value={item._id}>
-                                                    {item.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />}
+          <div className="flex gap-4">
+            <Button type="submit" disabled={isPending}>
+              Update Product
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => window.history.back()}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </Form>
 
-                    <Button type="submit" disabled={isPending}>
-                        Submit
-                    </Button>
-                    <Button type="button" onClick={() => window.history.back()} className="px-4 py-2 ml-2" disabled={isPending}>
-                        Go Back
-                    </Button>
-                </form>
-            </Form>
-            <AlertSuccess
-                isOpen={success}
-                message={success}
-                onClose={() => dispatch(clearSuccess())}
-            />
-            <AlertFailure
-                isOpen={error}
-                message={error}
-                onClose={() => dispatch(clearError())}
-            />
-        </div>
-    );
+      <AlertFailure
+        isOpen={!!error}
+        message={error}
+        onClose={() => dispatch(clearError())}
+      />
+    </div>
+  );
 };
 
 const Header = () => {
@@ -250,10 +247,4 @@ const Header = () => {
     );
 };
 
-const Page = () => (
-    <Suspense fallback={<div>Loading...</div>}>
-        <PageContent />
-    </Suspense>
-);
-
-export default Page;
+export default EditProductPage;
