@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from "@/components/ui/button"
-import { addToCart, clearError, clearSuccess } from '@/lib/features/cart';
+import { addToCart, clearError, clearSuccess, fetchCart } from '@/lib/features/cart';
 import { useSession } from 'next-auth/react';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import AlertSuccess from "@/components/alert-success";
@@ -21,6 +21,7 @@ const ProductActionBtns = ({ product }) => {
             const result = await dispatch(addToCart({ userId: session.user.id, productId: product._id, quantity }));
             if (addToCart.fulfilled.match(result)) {
                 dispatch(fetchSingleProduct(product._id));
+                dispatch(fetchCart(session.user.id));
             }
         } else {
             alert("Please Login First!");

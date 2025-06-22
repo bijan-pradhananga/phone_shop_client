@@ -48,21 +48,6 @@ const data = {
       ],
     },
     {
-      title: "Categories",
-      url: "#",
-      icon: Shapes,
-      items: [
-        {
-          title: "Add Category",
-          url: "/admin/category/add-category",
-        },
-        {
-          title: "View Category",
-          url: "/admin/category",
-        },
-      ],
-    },
-    {
       title: "Brands",
       url: "#",
       icon: Shapes,
