@@ -58,6 +58,7 @@ const Page = () => {
                                 <TableRow>
                                     <TableHead className="w-[100px]">#</TableHead>
                                     <TableHead>Name</TableHead>
+                                  
                                     <TableHead >Action</TableHead>
                                 </TableRow>
                             </TableHeader>

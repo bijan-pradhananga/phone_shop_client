@@ -49,9 +49,12 @@ const EditImageDialog = ({ product, onClose, handleDeleteImage, handleUpdateImag
                                             <div key={index} className="relative group">
                                                 {/* Image */}
                                                 <img
-                                                    src={`${API.defaults.baseURL}/${image}`}
-                                                    alt={`${product.name} Image ${index + 1}`}
-                                                    className="w-full aspect-square object-cover rounded"
+                                                    src={image.startsWith('products\\')
+                                                        ? `${API.defaults.baseURL}/${image}`
+                                                        : image
+                                                    }
+                                                    alt={`Product ${index}`}
+                                                    className="w-full h-full object-cover"
                                                 />
                                                 {/* Delete Icon */}
                                                 <button
@@ -79,7 +82,7 @@ const EditImageDialog = ({ product, onClose, handleDeleteImage, handleUpdateImag
                                                     accept="image/*"
                                                     multiple // Enables selecting multiple files
                                                     className="hidden"
-                                                    onChange={(e) => onImageChange(e.target.files)} 
+                                                    onChange={(e) => onImageChange(e.target.files)}
                                                 />
                                             </div>
                                         )}

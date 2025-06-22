@@ -16,15 +16,19 @@ const ProductCardHeader = ({ product }) => {
     // Fallback image URL (located in the public folder)
     const noImageUrl = '/noImage.png';
 
-    // Determine the image source
-    const imageSrc = product.images && product.images.length > 0 ? product.images[0] : noImageUrl;
-
     return (
         <img
-            src={imageSrc}
-            alt={product.name}
-            className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
-        />
+        src={
+          product.images?.[0]?.startsWith('products\\') || product.images?.[0]?.startsWith('products/')
+            ? `${API.defaults.baseURL}/${product.images[0].replace(/\\/g, '/')}`
+            : product.images?.[0] || '/noImage.png'
+        }
+        alt={product.name || 'Product image'}
+        className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80"
+        onError={(e) => {
+          e.currentTarget.src = '/noImage.png';
+        }}
+      />
     );
 };
 

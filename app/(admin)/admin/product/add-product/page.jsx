@@ -25,20 +25,17 @@ import { addProduct, clearError, clearSuccess } from "@/lib/features/product";
 import AlertSuccess from "@/components/alert-success";
 import AlertFailure from "@/components/alert-failure";
 import { productFormSchema } from "@/schemas/product";
-// import { fetchCategory } from "@/lib/features/category";
 import { fetchBrand } from "@/lib/features/brand";
 
 const AddProductPage = () => {
     const dispatch = useAppDispatch();
     const { success, error } = useAppSelector((state) => state.product);
-    const { data: categories, isLoading } = useAppSelector((state) => state.category);
     const { data: brands } = useAppSelector((state) => state.brand);
     const [isPending, startTransition] = useTransition();
 
     useEffect(() => {
-        dispatch(fetchCategory());
         dispatch(fetchBrand());
-    }, [])
+    }, []);
 
     const form = useForm({
         resolver: zodResolver(productFormSchema),
@@ -47,9 +44,17 @@ const AddProductPage = () => {
             description: '',
             price: 0,
             stock: 1,
-            category: '',
             brand: '',
             images: [],
+            specifications: {
+                ram_capacity: 0,
+                internal_memory: 0,
+                screen_size: 0,
+                battery_capacity: 0,
+                processor: '',
+                primary_camera_rear: 0,
+                primary_camera_front: 0,
+            }
         },
     });
 
@@ -59,25 +64,33 @@ const AddProductPage = () => {
         formData.append('description', data.description);
         formData.append('price', data.price);
         formData.append('stock', data.stock);
-        formData.append('category', data.category);
         formData.append('brand', data.brand);
-      
-        // Append images (ensure this matches the 'images' field in the backend)
-        Array.from(data.images).forEach((file, index) => {
-          formData.append('images', file); // 'images' should match the name in multer
+
+        // Specifications
+        formData.append('specifications[ram_capacity]', data.specifications.ram_capacity);
+        formData.append('specifications[internal_memory]', data.specifications.internal_memory);
+        formData.append('specifications[screen_size]', data.specifications.screen_size);
+        formData.append('specifications[battery_capacity]', data.specifications.battery_capacity);
+        formData.append('specifications[processor]', data.specifications.processor);
+        formData.append('specifications[primary_camera_rear]', data.specifications.primary_camera_rear);
+        formData.append('specifications[primary_camera_front]', data.specifications.primary_camera_front);
+
+        // Images
+        Array.from(data.images).forEach((file) => {
+            formData.append('images', file);
         });
-    
+
         startTransition(() => {
             dispatch(addProduct(formData));
             form.reset();
-            
-        })
+        });
     };
+
     return (
         <div>
             <Header />
             <Form {...form}>
-                <form encType="multipart/form-data" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" >
+                <form encType="multipart/form-data" onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                     <FormField
                         control={form.control}
                         name="name"
@@ -111,7 +124,7 @@ const AddProductPage = () => {
                             <FormItem>
                                 <FormLabel>Price</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="100.00" type="number" disabled={isPending} />
+                                    <Input {...field} type="number" placeholder="100.00" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -124,40 +137,12 @@ const AddProductPage = () => {
                             <FormItem>
                                 <FormLabel>Stock</FormLabel>
                                 <FormControl>
-                                    <Input {...field} placeholder="10" type="number" disabled={isPending} />
+                                    <Input {...field} type="number" placeholder="10" disabled={isPending} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-                    {/* <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Category</FormLabel>
-                                <FormControl>
-                                    <Select
-                                        onValueChange={field.onChange} // Update the form value
-                                        value={field.value} // Controlled input
-                                        disabled={isPending} // Disable if needed
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((item) => (
-                                                <SelectItem key={item._id} value={item._id}>
-                                                    {item.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
                     <FormField
                         control={form.control}
                         name="brand"
@@ -166,9 +151,9 @@ const AddProductPage = () => {
                                 <FormLabel>Brand</FormLabel>
                                 <FormControl>
                                     <Select
-                                        onValueChange={field.onChange} // Update the form value
-                                        value={field.value} // Controlled input
-                                        disabled={isPending} // Disable if needed
+                                        onValueChange={field.onChange}
+                                        value={field.value}
+                                        disabled={isPending}
                                     >
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a brand" />
@@ -186,6 +171,103 @@ const AddProductPage = () => {
                             </FormItem>
                         )}
                     />
+
+                    {/* Specifications Section */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                            control={form.control}
+                            name="specifications.ram_capacity"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>RAM (GB)</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="number" placeholder="8" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="specifications.internal_memory"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Storage (GB)</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="number" placeholder="128" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="specifications.screen_size"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Screen Size (inches)</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="number" step="0.1" placeholder="6.5" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="specifications.battery_capacity"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Battery (mAh)</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="number" placeholder="5000" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="specifications.processor"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Processor</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} placeholder="Snapdragon 8 Gen 2" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="specifications.primary_camera_rear"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Rear Camera (MP)</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="number" placeholder="64" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="specifications.primary_camera_front"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Front Camera (MP)</FormLabel>
+                                    <FormControl>
+                                        <Input {...field} type="number" placeholder="32" disabled={isPending} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    {/* Image Upload */}
                     <FormField
                         control={form.control}
                         name="images"
@@ -206,11 +288,13 @@ const AddProductPage = () => {
                             </FormItem>
                         )}
                     />
+
                     <Button type="submit" disabled={isPending}>
                         Submit
                     </Button>
                 </form>
             </Form>
+
             <AlertSuccess
                 isOpen={success}
                 message={success}
@@ -222,15 +306,15 @@ const AddProductPage = () => {
                 onClose={() => dispatch(clearError())}
             />
         </div>
-    )
-}
-
+    );
+};
 
 const Header = () => {
     return (
         <header className="w-full bg-gray-100 rounded py-4 px-2 mb-4">
             <h1 className="text-2xl font-semibold">Add Product</h1>
         </header>
-    )
-}
-export default AddProductPage
+    );
+};
+
+export default AddProductPage;

@@ -30,52 +30,52 @@ const data = {
       plan: "Enterprise",
     },
   ],
-  navMain: [
-    {
-      title: "Products",
-      url: "#",
-      icon: TabletSmartphone,
-      isActive: true,
-      items: [
-        {
-          title: "Add Product",
-          url: "/admin/product/add-product",
-        },
-        {
-          title: "View Product",
-          url: "/admin/product/",
-        },
-      ],
-    },
-    {
-      title: "Brands",
-      url: "#",
-      icon: Shapes,
-      items: [
-        {
-          title: "Add Brand",
-          url: "/admin/brand/add-brand",
-        },
-        {
-          title: "View Brand",
-          url: "/admin/brand",
-        },
-      ],
-    },
-    {
-      title: "Orders",
-      url: "#",
-      icon: ShoppingBag,
-      items: [
-        {
-          title: "View Orders",
-          url: "/admin/orders",
-        },
+navMain: [
+  
+  {
+    title: "Products",
+    url: "#",
+    icon: TabletSmartphone,
+    isActive: true,
+    items: [
+      {
+        title: "Add Product",
+        url: "/admin/product/add-product",
+      },
+      {
+        title: "View Product",
+        url: "/admin/product/",
+      },
+    ],
+  },
+  {
+    title: "Brands",
+    url: "#",
+    icon: Shapes,
+    items: [
+      {
+        title: "Add Brand",
+        url: "/admin/brand/add-brand",
+      },
+      {
+        title: "View Brand",
+        url: "/admin/brand",
+      },
+    ],
+  },
+  {
+    title: "Orders",
+    url: "#",
+    icon: ShoppingBag,
+    items: [
+      {
+        title: "View Orders",
+        url: "/admin/orders",
+      },
+    ],
+  },
+],
 
-      ],
-    },
-
-  ],
 
 }
 

@@ -57,7 +57,7 @@ const OrderDetails = () => {
                                                             >
                                                                 <img
                                                                     className="h-auto w-full max-h-full"
-                                                                    src={`${API.defaults.baseURL}/${item.product.images[0]}`}
+                                                                    src={`${item.product.images[0]}`}
                                                                     alt="product image"
                                                                 />
                                                             </div>

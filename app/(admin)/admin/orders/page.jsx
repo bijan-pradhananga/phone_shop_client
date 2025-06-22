@@ -27,6 +27,7 @@ const OrderPage = () => {
   const { data, isLoading, success, error, total, totalPages, isSearched } = useAppSelector((state) => state.order);
   const searchParams = useSearchParams();
   let currentPage = 1;
+  let limit = 20;
   if (searchParams.get('page')) {
     currentPage = Number(searchParams.get('page'))
   }
@@ -35,7 +36,7 @@ const OrderPage = () => {
     if (confirm) {
       const result = await dispatch(cancelOrder(id));;
       if (cancelOrder.fulfilled.match(result)) {
-        dispatch(fetchOrders({ page: currentPage, limit: 10 }));
+        dispatch(fetchOrders({ page: currentPage, limit }));
       }
     }
   }
@@ -45,7 +46,7 @@ const OrderPage = () => {
     if (confirm) {
       const result = await dispatch(confirmOrder(id));;
       if (confirmOrder.fulfilled.match(result)) {
-        dispatch(fetchOrders({ page: currentPage, limit: 10 }));
+        dispatch(fetchOrders({ page: currentPage, limit }));
       }
     }
   }
@@ -53,7 +54,7 @@ const OrderPage = () => {
 
   const fetchItems = () => {
     dispatch(clearSearch());
-    dispatch(fetchOrders({ page: currentPage, limit: 10 }));
+    dispatch(fetchOrders({ page: currentPage, limit }));
   }
 
   const searchItems = (query) => {
@@ -61,7 +62,7 @@ const OrderPage = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchOrders({ page: currentPage, limit: 10 }));
+    dispatch(fetchOrders({ page: currentPage, limit }));
   }, [dispatch, currentPage])
 
   return (

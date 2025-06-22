@@ -2,6 +2,7 @@ import LatestProductSection from "@/components/latest-product";
 import Image from "next/image";
 import Link from "next/link";
 import { companyName } from "./info";
+import RecommendedProducts from "@/components/recommeded-product";
 
 export default function Home() {
   return (
@@ -39,6 +40,7 @@ export default function Home() {
         </div>
       </div>
       <LatestProductSection/>
+      {/* <RecommendedProducts/> */}
     </>
   );
 }
