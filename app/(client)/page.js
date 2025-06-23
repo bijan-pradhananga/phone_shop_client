@@ -40,7 +40,7 @@ export default function Home() {
         </div>
       </div>
       <LatestProductSection/>
-      {/* <RecommendedProducts/> */}
+      <RecommendedProducts/>
     </>
   );
 }
