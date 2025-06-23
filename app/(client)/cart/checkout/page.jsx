@@ -68,6 +68,7 @@ const CheckOutPage = () => {
         startTransition(async () => {
             const res = await dispatch(createOrder(data));
             if (createOrder.fulfilled.match(res)) {
+                dispatch(fetchCart(session?.user?.id));
                 if (data.billingInfo.paymentMethod == 'Esewa') {
                     const { payment, order } = res.payload;
                     const form = document.createElement('form');
@@ -246,7 +247,7 @@ const CheckOutPage = () => {
                                             </FormItem>
                                         )}
                                     />
-                                     <FormField
+                                    <FormField
                                         control={form.control}
                                         name="paymentMethod"
                                         render={({ field }) => (
@@ -282,7 +283,7 @@ const CheckOutPage = () => {
                                             </FormItem>
                                         )}
                                     />
-                                    
+
                                 </div>
                             </div>
                         </div>
